@@ -1,0 +1,78 @@
+crypto.js
+
+    hash                    Buffer -> Buffer
+
+        SHA-256
+
+    keygen                  () -> Buffer x Buffer
+    sign                    Buffer x Buffer -> Buffer
+    verify                  Buffer x Buffer x Buffer -> Boolean
+
+        ECDSA P-256
+
+    encrypt                 Buffer x Buffer -> Buffer
+    decrypt                 Buffer x Buffer -> Buffer  (maybe exception)
+
+        AES-128-CBC
+
+util.js
+
+    get_random              Integer -> Buffer
+    hexadecimal_encode      Buffer -> String
+    hexadecimal_decode      String -> Buffer
+
+sstore.js
+
+    write                   Buffer -> Boolean
+    read                    () -> Buffer  (maybe exception)
+
+vmi.js
+
+    get_state               () -> Buffer
+
+scm.js
+
+    process_att_challenge   Buffer -> Buffer
+
+        主要程式
+
+net.js
+
+    start_http_server       () -> ()
+
+device.js
+
+    main                    () -> ()
+
+-------------------------------------------------------------------------------
+
+setup.js
+
+    main                    () -> ()
+
+        呼叫 keygen 產生公鑰、私鑰
+
+-------------------------------------------------------------------------------
+
+run_attestation.js
+
+    main                    () -> ()
+
+        呼叫 get_random 產生一個 challenge 訊息
+
+        把 challenge 訊息用 HTTP GET 方法送到 device.js 等結果
+
+        得到結果以後
+        讀取公鑰
+        產生完整 state
+        呼叫 verify 檢驗簽章
+
+-------------------------------------------------------------------------------
+
+constants.js
+
+    var PATH_TO_PUBLIC_KEY_FILE = 'pubkey';
+    var PATH_TO_PRIVATE_KEY_FILE = 'prvkey';
+    var DEVICE_INTERNAL_STATE = new Buffer('11db7a0b547fe71ffe4b32a3b802a401', 'hex');
+    var DEVICE_SSTORE_SECRET_KEY = new Buffer('213260e3953d86115f72b8fca15ae7b1', 'hex');
+
