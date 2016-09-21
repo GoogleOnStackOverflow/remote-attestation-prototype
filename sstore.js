@@ -20,19 +20,14 @@ exports.write = (buf) => {
 		if(err){
 			console.error(err);
 			return false;
+		}else{
+			return true;
 		}
 	});
-
-	return true;
 };
 
 exports.read = () => {
-	fs.readFile(PATH_TO_PRIVATE_KEY_FILE, (err, data) => {
-		if(err){
-			throw err;
-		}
-
-		return crypt.decrypt(DEVICE_SSTORE_SECRET_KEY, data);
-	});
+	var key_private = fs.readFileSync(PATH_TO_PRIVATE_KEY_FILE);
+	return crypt.decrypt(DEVICE_SSTORE_SECRET_KEY, key_private);
 };
 

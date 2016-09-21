@@ -4,7 +4,7 @@ device.js
 */
 const network = require('./net');
 
-const main = function(){
+const main = () => {
 	network.start_http_server();	
 };
 
