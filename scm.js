@@ -16,11 +16,6 @@ exports.process_att_challenge = function(S_chal){
 	var pre_s = Buffer.concat([S_chal, S_prov], S_chal.length + S_prov.length);
 	var pri = sstore.read();
 
-	console.log('!!');
-	console.log(pri);
-	console.log('!!!');
-	console.log(pre_s);
-
 	var alpha = crypt.sign(pri, pre_s);
 
 	return alpha;

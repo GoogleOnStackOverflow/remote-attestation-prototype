@@ -31,7 +31,7 @@ exports.read = () => {
 		if(err){
 			throw err;
 		}
-		console.log(crypt.decrypt(DEVICE_SSTORE_SECRET_KEY, data));
+
 		return crypt.decrypt(DEVICE_SSTORE_SECRET_KEY, data);
 	});
 };

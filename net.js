@@ -10,8 +10,8 @@ const scm = require('./scm');
 const util = require('./util');
 
 var isHex = (h) => {
-	var a = parseInt(h,16);
-	return (a.toString(16) === h.toLowerCase());
+	var re = /[0-9A-Fa-f]{6}/g;
+	return (re.test(h));
 }
 
 app.get('/attest/*', (req, res) => {
@@ -29,5 +29,8 @@ app.get('*', (req, res) => {
 })
 
 exports.start_http_server = () => {
-	app.listen(3000);
+	var expressPort = (process.env.PORT || 3000);
+	app.listen(expressPort, function () {
+		console.log(`Device listening on http://localhost:${expressPort}`);
+	});
 };

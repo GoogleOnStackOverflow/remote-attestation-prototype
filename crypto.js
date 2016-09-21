@@ -11,8 +11,5 @@ exports.hash = (data) => {
 }
 
 exports.sign = (a, b) => {
-	console.log('sign!');
-	console.log(a);
-	console.log(b);
 	return Buffer.concat([a, b], a.length + b.length);
 }
