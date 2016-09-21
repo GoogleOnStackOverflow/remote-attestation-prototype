@@ -3,8 +3,8 @@ net.js
 
     start_http_server       () -> ()
 */
-var express = require('express');
-var app = express();
+const express = require('express');
+const app = express();
 
 const scm = require('./scm');
 const util = require('./util');

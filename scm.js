@@ -5,11 +5,9 @@ scm.js
     input: State of Chal
     output: signed alpha
 */
-var sstore = require('./sstore');
-var vmi = require('./vmi');
-var crypt = require('./crypto');
-var exports = module.exports = {};
-
+const sstore = require('./sstore');
+const vmi = require('./vmi');
+const crypt = require('./crypto');
 
 exports.process_att_challenge = function(S_chal){
 	var S_prov = crypt.hash(vmi.get_state());
