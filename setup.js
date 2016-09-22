@@ -9,3 +9,5 @@ const main = () => {
 
 	console.log('Key Files Generated');
 };
+
+main();
