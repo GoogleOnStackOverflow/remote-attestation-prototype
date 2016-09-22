@@ -38,17 +38,14 @@ const main = () => {
 
 			res.on('end', function () {
 				// Parse Alpha from http response
-				console.log(str);
 				var res_obj = JSON.parse(str);
 				var alpha = res_obj['alpha'];
-				console.log(`Alpha: ${alpha}`);
 				alpha = util.hexadecimal_decode(alpha);
 
 				// Generate expected alpha
 				var state = crypt.hash(get_legal_S_Prov());
-				console.log(`State: ${state}`);
+				var expected_alpha = Buffer.concat([S_chal, state], S_chal.length + state.length);
 
-				var expected_alpha = Buffer.concat([S_chal, state], S_chal.length + state.length)
 				// Get Public key from fs
 				var key_public = fs.readFileSync(constants.PATH_TO_PUBLIC_KEY_FILE);
 

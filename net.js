@@ -1,8 +1,3 @@
-/*
-net.js
-
-    start_http_server       () -> ()
-*/
 const express = require('express');
 const app = express();
 

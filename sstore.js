@@ -1,11 +1,3 @@
-/*
-sstore.js
-
-    write                   Buffer -> Boolean
-    read                    () -> Buffer  (maybe exception)
-
-    read/write the key for AES-128
-*/
 const constant = require('./constants');
 const crypt = require('./crypto');
 const fs = require('fs');

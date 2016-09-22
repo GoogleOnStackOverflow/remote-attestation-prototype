@@ -1,7 +1,3 @@
-/*
-device.js
-    main                    () -> ()
-*/
 const network = require('./net');
 
 const main = () => {

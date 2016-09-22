@@ -51,9 +51,6 @@ const keygen = exports.keygen = function () {
 };
 
 const sign = exports.sign = function (private_key_buf, message_buf) {
-	console.log('=== SIGN LOGS ===');
-	console.log(`private_key_buf: ${private_key_buf}`);
-	console.log(`message_buf: ${message_buf}`);
 	fs.writeFileSync(path.join(TMPDIR, 'sk'), private_key_buf);
 	fs.writeFileSync(path.join(TMPDIR, 'msg'), message_buf);
 
@@ -67,8 +64,6 @@ const sign = exports.sign = function (private_key_buf, message_buf) {
 	]);
 
 	const signature_buf = fs.readFileSync(path.join(TMPDIR, 'sig'));
-	console.log(`signature_buf: ${signature_buf} , type: ${typeof(signature_buf)}`);
-	console.log('=== SIGN LOGS END ===');
 	return signature_buf;
 };
 
