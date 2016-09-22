@@ -1,25 +1,21 @@
-/*
+const fs = require('fs');
 
-util.js
+const get_random = exports.get_random = function (number_of_bytes) {
+	const random_buf = new Buffer(number_of_bytes);
 
-    get_random              Integer -> Buffer
-    hexadecimal_encode      Buffer -> String
-    hexadecimal_decode      String -> Buffer
+	const fd = fs.openSync('/dev/urandom', 'r');
+	fs.readSync(fd, random_buf, 0, number_of_bytes);
+	fs.closeSync(fd);
 
-*/
-
-var get_random = function (number_of_bytes) {
-  // TODO
-  var random_data = new Buffer(number_of_bytes);
-  return random_data;
+	return random_buf;
 };
 
-var hexadecimal_encode = function (binary_data) {
-  // TODO
-  return '';
+const hexadecimal_encode = exports.hexadecimal_encode = function (raw_buffer) {
+	const hex_string = raw_buffer.toString('hex');
+	return hex_string;
 };
 
-var hexadecimal_decode = function (encoded_data) {
-  // TODO
-  return new Buffer();
+const hexadecimal_decode = exports.hexadecimal_decode = function (hex_string) {
+	const raw_buffer = new Buffer(hex_string, 'hex');
+	return raw_buffer;
 };
