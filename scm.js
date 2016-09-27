@@ -3,7 +3,7 @@ const vmi = require('./vmi');
 const crypt = require('./crypto');
 
 exports.process_att_challenge = function(S_chal){
-	var S_prov = crypt.hash(vmi.get_state());
+	var S_prov = vmi.get_state();
 	var pre_s = Buffer.concat([S_chal, S_prov], S_chal.length + S_prov.length);
 	var pri = sstore.read();
 

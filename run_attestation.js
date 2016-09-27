@@ -43,7 +43,7 @@ const main = () => {
 				alpha = util.hexadecimal_decode(alpha);
 
 				// Generate expected alpha
-				var state = crypt.hash(get_legal_S_Prov());
+				var state = get_legal_S_Prov();
 				var expected_alpha = Buffer.concat([S_chal, state], S_chal.length + state.length);
 
 				// Get Public key from fs
