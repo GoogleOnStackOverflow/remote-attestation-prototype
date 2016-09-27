@@ -23,8 +23,8 @@ util.js
 
 sstore.js
 
-    write                   Buffer -> Boolean
-    read                    () -> Buffer  (maybe exception)
+    write                   String x Buffer -> Boolean  (maybe exception)
+    read                    String -> Buffer  (maybe exception)
 
 vmi.js
 

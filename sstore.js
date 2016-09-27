@@ -39,6 +39,7 @@ exports.write = (idx, data) => {
 	ensure_sstore_directory();
 
 	fs.writeFileSync(idx2path(idx), encrypt(data));
+	return true;
 };
 
 exports.read = (idx) => {
