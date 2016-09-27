@@ -8,12 +8,12 @@ crypto.js
     sign                    Buffer x Buffer -> Buffer
     verify                  Buffer x Buffer x Buffer -> Boolean
 
-        ECDSA P-256
+        secp256k1 ECDSA with SHA-256
 
     encrypt                 Buffer x Buffer -> Buffer
     decrypt                 Buffer x Buffer -> Buffer  (maybe exception)
 
-        AES-128-CBC
+        AES-128 with Galois/Counter Mode
 
 util.js
 

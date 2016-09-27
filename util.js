@@ -1,21 +1,21 @@
-const fs = require('fs');
+module.exports = (function(){
 
-const get_random = exports.get_random = function (number_of_bytes) {
-	const random_buf = new Buffer(number_of_bytes);
+  const get_random = function (number_of_bytes) {
+    return require('crypto').randomBytes(number_of_bytes);
+  };
 
-	const fd = fs.openSync('/dev/urandom', 'r');
-	fs.readSync(fd, random_buf, 0, number_of_bytes);
-	fs.closeSync(fd);
+  const hexadecimal_encode = function (raw_buffer) {
+    return raw_buffer.toString('hex');
+  };
 
-	return random_buf;
-};
+  const hexadecimal_decode = function (hex_string) {
+    return new Buffer(hex_string, 'hex');
+  };
 
-const hexadecimal_encode = exports.hexadecimal_encode = function (raw_buffer) {
-	const hex_string = raw_buffer.toString('hex');
-	return hex_string;
-};
+  return {
+    get_random: get_random,
+    hexadecimal_encode: hexadecimal_encode,
+    hexadecimal_decode: hexadecimal_decode,
+  };
 
-const hexadecimal_decode = exports.hexadecimal_decode = function (hex_string) {
-	const raw_buffer = new Buffer(hex_string, 'hex');
-	return raw_buffer;
-};
+})();

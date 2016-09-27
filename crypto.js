@@ -1,128 +1,103 @@
-const child_process = require('child_process');
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
-const _util = require('./util');
-const TMPDIR = os.tmpdir();
+module.exports = (function(){
 
-const hash = exports.hash = function (message_buf) {
-	fs.writeFileSync(path.join(TMPDIR, 'msg'), message_buf);
+  const child_process = require('child_process');
+  const crypto = require('crypto');
+  const fs = require('fs');
+  const os = require('os');
+  const path = require('path');
 
-	child_process.spawnSync('openssl', [
-		'dgst',
-		'-sha256',
-		'-binary',
-		'-out', path.join(TMPDIR, 'digest'),
-		path.join(TMPDIR, 'msg'),
-	]);
+  const hash = function (message_buf) {
+    return crypto.createHash('sha256').update(message_buf).digest();
+  };
 
-	const digest_buf = fs.readFileSync(path.join(TMPDIR, 'digest'));
-	return digest_buf;
-};
+  const keygen = function () {
+    var TMPDIR = os.tmpdir();
 
-const keygen = exports.keygen = function () {
-	child_process.spawnSync('openssl', [
-		'ecparam',
-		'-genkey',
-		'-name', 'prime256v1',
-		'-outform', 'DER',
-		'-out', path.join(TMPDIR, 'sk.orig'),
-	]);
+    child_process.spawnSync('openssl', [
+      'ecparam',
+      '-genkey',
+      '-name', 'secp256k1',
+      '-outform', 'PEM',
+      '-out', path.join(TMPDIR, 'sk.orig'),
+    ]);
 
-	child_process.spawnSync('dd', [
-		'skip=10',
-		'bs=1',
-		'if=' + path.join(TMPDIR, 'sk.orig'),
-		'of=' + path.join(TMPDIR, 'sk'),
-	]);
+    child_process.spawnSync('dd', [
+      'skip=71',
+      'bs=1',
+      'if=' + path.join(TMPDIR, 'sk.orig'),
+      'of=' + path.join(TMPDIR, 'sk'),
+    ]);
 
-	child_process.spawnSync('openssl', [
-		'ec',
-		'-pubout',
-		'-inform', 'DER',
-		'-outform', 'DER',
-		'-in', path.join(TMPDIR, 'sk'),
-		'-out', path.join(TMPDIR, 'pk'),
-	]);
+    child_process.spawnSync('openssl', [
+      'ec',
+      '-pubout',
+      '-inform', 'PEM',
+      '-outform', 'PEM',
+      '-in', path.join(TMPDIR, 'sk'),
+      '-out', path.join(TMPDIR, 'pk'),
+    ]);
 
-	const private_key_buf = fs.readFileSync(path.join(TMPDIR, 'sk'));
-	const public_key_buf = fs.readFileSync(path.join(TMPDIR, 'pk'));
-	return [private_key_buf, public_key_buf];
-};
+    var private_key_buf = fs.readFileSync(path.join(TMPDIR, 'sk'));
+    var public_key_buf = fs.readFileSync(path.join(TMPDIR, 'pk'));
 
-const sign = exports.sign = function (private_key_buf, message_buf) {
-	fs.writeFileSync(path.join(TMPDIR, 'sk'), private_key_buf);
-	fs.writeFileSync(path.join(TMPDIR, 'msg'), message_buf);
+    fs.unlinkSync(path.join(TMPDIR, 'sk.orig'));
+    fs.unlinkSync(path.join(TMPDIR, 'sk'));
+    fs.unlinkSync(path.join(TMPDIR, 'pk'));
 
-	child_process.spawnSync('openssl', [
-		'dgst',
-		'-ecdsa-with-SHA1',
-		'-keyform', 'DER',
-		'-sign', path.join(TMPDIR, 'sk'),
-		'-out', path.join(TMPDIR, 'sig'),
-		path.join(TMPDIR, 'msg'),
-	]);
+    return [private_key_buf, public_key_buf];
+  };
 
-	const signature_buf = fs.readFileSync(path.join(TMPDIR, 'sig'));
-	return signature_buf;
-};
+  const sign = function (private_key_buf, message_buf) {
+    var signobj = crypto.createSign('sha256');
+    signobj.update(message_buf);
+    return signobj.sign(private_key_buf.toString());
+  };
 
-const verify = exports.verify = function (public_key_buf, message_buf, signature_buf) {
-	fs.writeFileSync(path.join(TMPDIR, 'pk'), public_key_buf);
-	fs.writeFileSync(path.join(TMPDIR, 'msg'), message_buf);
-	fs.writeFileSync(path.join(TMPDIR, 'sig'), signature_buf);
+  const verify = function (public_key_buf, message_buf, signature_buf) {
+    var verifyobj = crypto.createVerify('sha256');
+    verifyobj.update(message_buf);
+    return verifyobj.verify(public_key_buf.toString(), signature_buf);
+  };
 
-	const child_process_result = child_process.spawnSync('openssl', [
-		'dgst',
-		'-ecdsa-with-SHA1',
-		'-keyform', 'DER',
-		'-verify', path.join(TMPDIR, 'pk'),
-		'-signature', path.join(TMPDIR, 'sig'),
-		path.join(TMPDIR, 'msg'),
-	]);
+  const encrypt = function (secretkey, plaintext_buf) {
+    if (!Buffer.isBuffer(secretkey) || !Buffer.isBuffer(plaintext_buf)) throw TypeError();
+    if (secretkey.length !== 16) throw RangeError();
 
-	const exit_status_code = child_process_result.status;
-	return exit_status_code === 0;
-};
+    var iv = crypto.randomBytes(16);
+    var cipher = crypto.createCipheriv('aes-128-gcm', secretkey, iv);
+    var buf_list = [];
 
-const encrypt = exports.encrypt = function (secretkey_buf, plaintext_buf) {
-	const iv_buf = _util.get_random(16);
-	const iv_hex = _util.hexadecimal_encode(iv_buf);
-	const sk_hex = _util.hexadecimal_encode(secretkey_buf);
+    buf_list.push(iv);
+    buf_list.push(cipher.update(plaintext_buf));
+    buf_list.push(cipher.final());
+    buf_list.unshift(cipher.getAuthTag());
 
-	fs.writeFileSync(path.join(TMPDIR, 'msg'), plaintext_buf);
+    return Buffer.concat(buf_list);
+  };
 
-	child_process.spawnSync('openssl', [
-		'enc',
-		'-e',
-		'-aes-128-cbc',
-		'-in', path.join(TMPDIR, 'msg'),
-		'-out', path.join(TMPDIR, 'blob'),
-		'-K', sk_hex,
-		'-iv', iv_hex,
-	]);
+  const decrypt = function (secretkey, ciphertext_buf) {
+    if (!Buffer.isBuffer(secretkey) || !Buffer.isBuffer(ciphertext_buf)) throw TypeError();
+    if (secretkey.length !== 16 || ciphertext_buf.length < 32) throw RangeError();
 
-	const ciphertext_buf = Buffer.concat([iv_buf, fs.readFileSync(path.join(TMPDIR, 'blob'))]);
-	return ciphertext_buf;
-};
+    var at = ciphertext_buf.slice(0, 16);
+    var iv = ciphertext_buf.slice(16, 32);
+    var decipher = crypto.createDecipheriv('aes-128-gcm', secretkey, iv);
+    var buf_list = [];
 
-const decrypt = exports.decrypt = function (secretkey_buf, ciphertext_buf) {
-	const iv_buf = ciphertext_buf.slice(0, 16);
-	const iv_hex = _util.hexadecimal_encode(iv_buf);
-	const sk_hex = _util.hexadecimal_encode(secretkey_buf);
+    decipher.setAuthTag(at);
+    buf_list.push(decipher.update(ciphertext_buf.slice(32)));
+    buf_list.push(decipher.final());
 
-	fs.writeFileSync(path.join(TMPDIR, 'blob'), ciphertext_buf.slice(16));
+    return Buffer.concat(buf_list);
+  };
 
-	child_process.spawnSync('openssl', [
-		'enc',
-		'-d',
-		'-aes-128-cbc',
-		'-in', path.join(TMPDIR, 'blob'),
-		'-out', path.join(TMPDIR, 'msg'),
-		'-K', sk_hex,
-		'-iv', iv_hex,
-	]);
+  return {
+    hash: hash,
+    keygen: keygen,
+    sign: sign,
+    verify: verify,
+    encrypt: encrypt,
+    decrypt: decrypt,
+  };
 
-	const plaintext_buf = fs.readFileSync(path.join(TMPDIR, 'msg'));
-	return plaintext_buf;
-};
+})();
