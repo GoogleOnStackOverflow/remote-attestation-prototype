@@ -12,7 +12,7 @@ const main = () => {
 	const pub_key = keys[1];
 
 	// prover stores the private key
-	sstore.write(pri_key);
+	sstore.write('_attestation_private_key_', pri_key);
 
 	// challenger stores the public key
 	fs.writeFileSync(constant.PATH_TO_PUBLIC_KEY_FILE, pub_key);
