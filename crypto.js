@@ -1,5 +1,6 @@
 module.exports = (function(){
 
+  const assert = require('assert');
   const child_process = require('child_process');
   const crypto = require('crypto');
   const fs = require('fs');
@@ -11,7 +12,7 @@ module.exports = (function(){
   };
 
   const keygen = function () {
-    var TMPDIR = os.tmpdir();
+    const TMPDIR = os.tmpdir();
 
     child_process.spawnSync('openssl', [
       'ecparam',
@@ -37,8 +38,8 @@ module.exports = (function(){
       '-out', path.join(TMPDIR, 'pk'),
     ]);
 
-    var private_key_buf = fs.readFileSync(path.join(TMPDIR, 'sk'));
-    var public_key_buf = fs.readFileSync(path.join(TMPDIR, 'pk'));
+    const private_key_buf = fs.readFileSync(path.join(TMPDIR, 'sk'));
+    const public_key_buf = fs.readFileSync(path.join(TMPDIR, 'pk'));
 
     fs.unlinkSync(path.join(TMPDIR, 'sk.orig'));
     fs.unlinkSync(path.join(TMPDIR, 'sk'));
@@ -48,24 +49,25 @@ module.exports = (function(){
   };
 
   const sign = function (private_key_buf, message_buf) {
-    var signobj = crypto.createSign('sha256');
+    const signobj = crypto.createSign('sha256');
     signobj.update(message_buf);
     return signobj.sign(private_key_buf.toString());
   };
 
   const verify = function (public_key_buf, message_buf, signature_buf) {
-    var verifyobj = crypto.createVerify('sha256');
+    const verifyobj = crypto.createVerify('sha256');
     verifyobj.update(message_buf);
     return verifyobj.verify(public_key_buf.toString(), signature_buf);
   };
 
   const encrypt = function (secretkey, plaintext_buf) {
-    if (!Buffer.isBuffer(secretkey) || !Buffer.isBuffer(plaintext_buf)) throw TypeError();
-    if (secretkey.length !== 16) throw RangeError();
+    assert(Buffer.isBuffer(secretkey) &&
+           Buffer.isBuffer(plaintext_buf) &&
+           secretkey.length === 16);
 
-    var iv = crypto.randomBytes(16);
-    var cipher = crypto.createCipheriv('aes-128-gcm', secretkey, iv);
-    var buf_list = [];
+    const iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv('aes-128-gcm', secretkey, iv);
+    const buf_list = [];
 
     buf_list.push(iv);
     buf_list.push(cipher.update(plaintext_buf));
@@ -76,13 +78,15 @@ module.exports = (function(){
   };
 
   const decrypt = function (secretkey, ciphertext_buf) {
-    if (!Buffer.isBuffer(secretkey) || !Buffer.isBuffer(ciphertext_buf)) throw TypeError();
-    if (secretkey.length !== 16 || ciphertext_buf.length < 32) throw RangeError();
+    assert(Buffer.isBuffer(secretkey) &&
+           Buffer.isBuffer(ciphertext_buf) &&
+           secretkey.length === 16 &&
+           ciphertext_buf.length >= 32);
 
-    var at = ciphertext_buf.slice(0, 16);
-    var iv = ciphertext_buf.slice(16, 32);
-    var decipher = crypto.createDecipheriv('aes-128-gcm', secretkey, iv);
-    var buf_list = [];
+    const at = ciphertext_buf.slice(0, 16);
+    const iv = ciphertext_buf.slice(16, 32);
+    const decipher = crypto.createDecipheriv('aes-128-gcm', secretkey, iv);
+    const buf_list = [];
 
     decipher.setAuthTag(at);
     buf_list.push(decipher.update(ciphertext_buf.slice(32)));
