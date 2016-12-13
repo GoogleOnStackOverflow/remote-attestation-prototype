@@ -140,7 +140,7 @@ int main (int argc, char **argv)
         vmi_read_32_va(vmi, current_process + pid_offset, 0, (uint32_t*)&pid);
 
         procname = vmi_read_str_va(vmi, current_process + name_offset, 0);
-        try_to_get_data = vmi_read_str_va(vmi, current_process, 0);
+        try_to_get_data = vmi_read_va(vmi, 0x08048000, pid, 1024);
 
         if (!procname) {
             printf("Failed to find procname\n");
@@ -150,8 +150,8 @@ int main (int argc, char **argv)
         /* print out the process name */
         printf("[%5d] %s (struct addr:%"PRIx64")\n", pid, procname, current_process);
 
-        if(strcmp(procname,"server") == 0){
-            printf("%s\n", try_to_get_data);
+        if(strcmp(procname,"trivial") == 0){
+            vmi_print_hex_va(vmi, 0x08048000, pid, 1024);
         }
         
         if (procname) {
