@@ -47,6 +47,7 @@ my_init_module(
     unsigned long pidOffset;
     unsigned long pgdOffset;
     unsigned long addrOffset;
+    unsigned long addrEndOffset;
 
     printk(KERN_ALERT "Module %s loaded.\n\n", MYMODNAME);
     p = current;
@@ -62,6 +63,9 @@ my_init_module(
         addrOffset =
             (unsigned long) (&(p->mm->start_code)) -
             (unsigned long) (p->mm);
+        addrEndOffset =
+            (unsigned long) (&(p->mm->end_code)) -
+            (unsigned long) (p->mm);
 
         printk(KERN_ALERT "[domain name] {\n");
         printk(KERN_ALERT "    ostype = \"Linux\";\n");
@@ -76,6 +80,10 @@ my_init_module(
                (unsigned int) pidOffset);
         printk(KERN_ALERT "    linux_pgd = 0x%x;\n",
                (unsigned int) pgdOffset);
+        printk(KERN_ALERT "    linux_addr = 0x%x;\n",
+               (unsigned int) addrOffset);
+        printk(KERN_ALERT "    linux_addre = 0x%x;\n",
+               (unsigned int) addrEndOffset);
         printk(KERN_ALERT "}\n");
     }
     else {
