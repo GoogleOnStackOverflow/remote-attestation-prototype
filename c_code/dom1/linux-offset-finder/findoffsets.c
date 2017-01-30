@@ -57,8 +57,6 @@ my_init_module(
     unsigned long brkOffset;
 
     unsigned long start_stackOffset;
-    
-    unsigned long threadOffset;
     unsigned long userspOffset;
     
     printk(KERN_ALERT "Module %s loaded.\n\n", MYMODNAME);
@@ -96,12 +94,9 @@ my_init_module(
         start_stackOffset =
             (unsigned long) (&(p->mm->start_stack)) -
             (unsigned long) (p->mm);
-        threadOffset =
-            (unsigned long) (&(p->thread)) -
-            (unsigned long) (p);
         userspOffset = 
             (unsigned long) (&(p->thread.sp)) -
-            (unsigned long) (&(p->thread));
+            (unsigned long) (p);
 
         printk(KERN_ALERT "[domain name] {\n");
         printk(KERN_ALERT "    ostype = \"Linux\";\n");
@@ -131,8 +126,6 @@ my_init_module(
                (unsigned int) brkOffset);
         printk(KERN_ALERT "    start_stack = 0x%x;\n",
                (unsigned int) start_stackOffset);
-        printk(KERN_ALERT "    thread = 0x%x;\n",
-               (unsigned int) threadOffset);
         printk(KERN_ALERT "    usersp = 0x%x;\n",
                (unsigned int) userspOffset);   
     }
