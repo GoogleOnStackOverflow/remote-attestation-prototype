@@ -169,7 +169,7 @@ int main (int argc, char **argv)
             char* code_buffer[end_code-start_code];
             char* data_buffer[end_data-start_data];
             char* brk_buffer[brk-start_brk];
-            char* stack_buffer[start_stack-stack_pointer];
+            //char* stack_buffer[start_stack-stack_pointer];
 
             printf("\n{\"status_code\":%d,\"result\":{\"name\":\"%s\",\"pid\":%d,\"code\":",status_code,procname,pid);
             print_hex_string(code_buffer,vmi_read_va(vmi, start_code, pid, code_buffer, end_code - start_code));
@@ -177,8 +177,8 @@ int main (int argc, char **argv)
             print_hex_string(data_buffer,vmi_read_va(vmi, start_data, pid, data_buffer, end_data - start_data));
             printf("\",\"heap\":\"");
             print_hex_string(brk_buffer,vmi_read_va(vmi, start_brk, pid, brk_buffer, brk - start_brk));
-            printf("\",\"stack\":\"");
-            print_hex_string(stack_buffer,vmi_read_va(vmi, stack_pointer, pid, stack_buffer, start_stack - stack_pointer));
+            //printf("\",\"stack\":\"");
+            //print_hex_string(stack_buffer,vmi_read_va(vmi, stack_pointer, pid, stack_buffer, start_stack - stack_pointer));
             printf("\"}\n");
         }
 
