@@ -180,6 +180,8 @@ int main (int argc, char **argv)
             //printf("\",\"stack\":\"");
             //print_hex_string(stack_buffer,vmi_read_va(vmi, stack_pointer, pid, stack_buffer, start_stack - stack_pointer));
             printf("\"}\n");
+
+            printf("stack virtual addr:%p -  %p\n",stack_pointer,start_stack);
         }
 
         /* follow the next pointer */
