@@ -50,7 +50,7 @@ int main (int argc, char **argv)
     unsigned long start_brk_offset = 0x108;
     unsigned long brk_offset = 0x110;
     unsigned long start_stack_offset = 0x118;
-    unsigned long stack_offset = 0x9a0;
+    unsigned long arg_start_offset = 0x120;
     
     vmi_instance_t vmi;
     addr_t list_head = 0, next_list_entry = 0;
@@ -161,7 +161,7 @@ int main (int argc, char **argv)
             vmi_read_addr_va(vmi, mm_addr + brk_offset, 0, &brk);
 
             vmi_read_addr_va(vmi, mm_addr + start_stack_offset, 0, &start_stack);
-            vmi_read_addr_va(vmi, current_process + stack_offset, 0, &stack_pointer);
+            vmi_read_addr_va(vmi, mm_addr + arg_start_offset, 0, &stack_pointer);
             
             /* print out the process name */
             printf("[%5d] %s (struct addr:%"PRIx64")\n", pid, procname, current_process);
