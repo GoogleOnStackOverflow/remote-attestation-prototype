@@ -50,7 +50,7 @@ int main (int argc, char **argv)
     unsigned long start_brk_offset = 0x108;
     unsigned long brk_offset = 0x110;
     unsigned long start_stack_offset = 0x118;
-    unsigned long stack_offset = 0x8;
+    unsigned long stack_offset = 0x9a0;
     
     vmi_instance_t vmi;
     addr_t list_head = 0, next_list_entry = 0;
