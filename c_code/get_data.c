@@ -181,6 +181,9 @@ int main (int argc, char **argv)
             //print_hex_string(stack_buffer,vmi_read_va(vmi, stack_pointer, pid, stack_buffer, start_stack - stack_pointer));
             printf("\"}\n");
 
+            printf("code virtual addr:%p -  %p\n",start_code,end_code);
+            printf("data virtual addr:%p -  %p\n",start_data,end_data);
+            printf("heap virtual addr:%p -  %p\n",start_brk,brk);
             printf("stack virtual addr:%p -  %p\n",stack_pointer,start_stack);
         }
 
