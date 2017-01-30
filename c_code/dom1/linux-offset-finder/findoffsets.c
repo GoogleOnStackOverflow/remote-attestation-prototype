@@ -46,9 +46,19 @@ my_init_module(
     unsigned long mmOffset;
     unsigned long pidOffset;
     unsigned long pgdOffset;
-    unsigned long addrOffset;
-    unsigned long addrEndOffset;
 
+    unsigned long start_codeOffset;
+    unsigned long end_codeOffset;
+
+    unsigned long start_dataOffset;
+    unsigned long end_dataOffset;
+
+    unsigned long start_brkOffset;
+    unsigned long brkOffset;
+
+    unsigned long start_stackOffset;
+    unsigned long stackOffset;
+    
     printk(KERN_ALERT "Module %s loaded.\n\n", MYMODNAME);
     p = current;
 
@@ -60,12 +70,33 @@ my_init_module(
         pidOffset = (unsigned long) (&(p->pid)) - (unsigned long) (p);
         pgdOffset =
             (unsigned long) (&(p->mm->pgd)) - (unsigned long) (p->mm);
-        addrOffset =
+        start_codeOffset =
             (unsigned long) (&(p->mm->start_code)) -
             (unsigned long) (p->mm);
-        addrEndOffset =
+        end_codeOffset =
             (unsigned long) (&(p->mm->end_code)) -
             (unsigned long) (p->mm);
+
+        start_dataOffset =
+            (unsigned long) (&(p->mm->start_data)) -
+            (unsigned long) (p->mm);
+        end_dataOffset =
+            (unsigned long) (&(p->mm->end_data)) -
+            (unsigned long) (p->mm);
+
+        start_brkOffset =
+            (unsigned long) (&(p->mm->start_brk)) -
+            (unsigned long) (p->mm);
+        brkOffset =
+            (unsigned long) (&(p->mm->brk)) -
+            (unsigned long) (p->mm);
+
+        start_stackOffset =
+            (unsigned long) (&(p->mm->start_stack)) -
+            (unsigned long) (p->mm);
+        stackOffset =
+            (unsigned long) (&(p->stack)) -
+            (unsigned long) (p);
 
         printk(KERN_ALERT "[domain name] {\n");
         printk(KERN_ALERT "    ostype = \"Linux\";\n");
@@ -80,11 +111,23 @@ my_init_module(
                (unsigned int) pidOffset);
         printk(KERN_ALERT "    linux_pgd = 0x%x;\n",
                (unsigned int) pgdOffset);
-        printk(KERN_ALERT "    linux_addr = 0x%x;\n",
-               (unsigned int) addrOffset);
-        printk(KERN_ALERT "    linux_addre = 0x%x;\n",
-               (unsigned int) addrEndOffset);
-        printk(KERN_ALERT "}\n");
+        printk(KERN_ALERT "}\nOffsets:\n");
+        printk(KERN_ALERT "    start_code = 0x%x;\n",
+               (unsigned int) start_codeOffset);
+        printk(KERN_ALERT "    end_code = 0x%x;\n",
+               (unsigned int) end_codeOffset);
+        printk(KERN_ALERT "    start_data = 0x%x;\n",
+               (unsigned int) start_dataOffset);
+        printk(KERN_ALERT "    end_data = 0x%x;\n",
+               (unsigned int) end_dataOffset);
+        printk(KERN_ALERT "    start_brk = 0x%x;\n",
+               (unsigned int) start_brkOffset);
+        printk(KERN_ALERT "    brk = 0x%x;\n",
+               (unsigned int) brkOffset);
+        printk(KERN_ALERT "    start_stack = 0x%x;\n",
+               (unsigned int) start_stackOffset);
+        printk(KERN_ALERT "    stack = 0x%x;\n",
+               (unsigned int) stackOffset);   
     }
     else {
         printk(KERN_ALERT
