@@ -101,7 +101,7 @@ my_init_module(
             (unsigned long) (p);
         userspOffset = 
             (unsigned long) (&(p->thread.sp)) -
-            (unsigned long) (p->thread);
+            (unsigned long) (&(p->thread));
 
         printk(KERN_ALERT "[domain name] {\n");
         printk(KERN_ALERT "    ostype = \"Linux\";\n");
