@@ -100,7 +100,7 @@ my_init_module(
             (unsigned long) (&(p->thread)) -
             (unsigned long) (p);
         userspOffset = 
-            (unsigned long) (&(p->thread->usersp)) -
+            (unsigned long) (&(p->thread->sp)) -
             (unsigned long) (p->thread);
 
         printk(KERN_ALERT "[domain name] {\n");
