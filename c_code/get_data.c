@@ -77,7 +77,7 @@ int main (int argc, char **argv)
 
     /* initialize the libvmi library */
     if (vmi_init(&vmi, VMI_AUTO | VMI_INIT_COMPLETE, name) == VMI_FAILURE) {
-        status_code = 500
+        status_code = 500;
         err_result = "Failed to init LibVMI library.";
         return 1;
     }
