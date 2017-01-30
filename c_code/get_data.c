@@ -69,7 +69,8 @@ int main (int argc, char **argv)
     if (argc != 3) {
         status_code = 403;
         err_result = "Wrong arguments. Usage: get_data <vmname> <process name>";
-        goto error_exit;
+        printf("{\"status_code\":%d, \"result\":\"%s\"}\n", status_code, err_result);
+        return 1;
     }
 
     char *name = argv[1];
@@ -79,6 +80,7 @@ int main (int argc, char **argv)
     if (vmi_init(&vmi, VMI_AUTO | VMI_INIT_COMPLETE, name) == VMI_FAILURE) {
         status_code = 500;
         err_result = "Failed to init LibVMI library.";
+        printf("{\"status_code\":%d, \"result\":\"%s\"}\n", status_code, err_result);
         return 1;
     }
 
