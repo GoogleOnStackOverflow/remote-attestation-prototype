@@ -42,7 +42,7 @@ void print_hex_string(void* buf, unsigned long size){
 
 int main (int argc, char **argv)
 {
-    int status_code = 400;
+    int status_code = 404;
     char* err_result = NULL;
     // Fill this by insert findoffsets module on Dom1
     unsigned long start_code_offset = 0xe8;
@@ -189,6 +189,9 @@ int main (int argc, char **argv)
             goto error_exit;
         }
     } while(next_list_entry != list_head);
+
+    if(status_code == 404)
+        err_result = "Process not found";
 
 error_exit:
     if(status_code != 200){
