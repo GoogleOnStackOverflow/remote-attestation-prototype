@@ -42,6 +42,8 @@ void print_hex_string(void* buf, unsigned long size){
 
 int main (int argc, char **argv)
 {
+    int status_code = 400;
+    char* err_result = NULL;
     // Fill this by insert findoffsets module on Dom1
     unsigned long start_code_offset = 0xe8;
     unsigned long end_code_offset = 0xf0;
@@ -65,8 +67,9 @@ int main (int argc, char **argv)
 
     /* this is the VM or file that we are looking at */
     if (argc != 3) {
-        printf("Usage: %s <vmname> <process name>\n", argv[0]);
-        return 1;
+        status_code = 403;
+        err_result = "Wrong arguments. Usage: get_data <vmname> <process name>";
+        goto error_exit;
     }
 
     char *name = argv[1];
@@ -74,7 +77,8 @@ int main (int argc, char **argv)
 
     /* initialize the libvmi library */
     if (vmi_init(&vmi, VMI_AUTO | VMI_INIT_COMPLETE, name) == VMI_FAILURE) {
-        printf("Failed to init LibVMI library.\n");
+        status_code = 500
+        err_result = "Failed to init LibVMI library.";
         return 1;
     }
 
@@ -89,40 +93,35 @@ int main (int argc, char **argv)
         mm_offset = vmi_get_offset(vmi, "linux_mm");
     }
     else if (VMI_OS_WINDOWS == vmi_get_ostype(vmi)) {
-        printf("Not supporting Windows\n");
+        status_code = 403;
+        err_result = "Not supporting Windows";
         goto error_exit;
     }
 
     if (0 == tasks_offset || 0 == name_offset || 0 == pid_offset || 0 == mm_offset) {
-        printf("Failed to find offsets\n");
+        status_code = 500;
+        err_result = "Failed to find offsets";
         goto error_exit;
     }
 
     /* pause the vm for consistent memory access */
     if (vmi_pause_vm(vmi) != VMI_SUCCESS) {
-        printf("Failed to pause VM\n");
+        status_code = 500;
+        err_result = "Failed to pause VM";
         goto error_exit;
     }
 
     /* demonstrate name and id accessors */
-    char *name2 = vmi_get_name(vmi);
-
-    if (VMI_FILE != vmi_get_access_mode(vmi)) {
-        uint64_t id = vmi_get_vmid(vmi);
-
-        printf("Getting data from VM %s (id=%"PRIu64")\n", name2, id);
-    }
-    else {
-        printf("Not supporting file mode\n");
+    if (VMI_FILE == vmi_get_access_mode(vmi)) {
+        status_code = 500;
+        err_result = "Not supporting file mode";
         goto error_exit;
     }
-    free(name2);
 
     /* get the head of the list */
     list_head = vmi_translate_ksym2v(vmi, "init_task") + tasks_offset;
     next_list_entry = list_head;
 
-    int status_code = 400;
     /* walk the task list */
     do {
         current_process = next_list_entry - tasks_offset;
@@ -163,17 +162,15 @@ int main (int argc, char **argv)
             vmi_read_addr_va(vmi, mm_addr + start_stack_offset, 0, &start_stack);
             vmi_read_addr_va(vmi, mm_addr + arg_start_offset, 0, &stack_pointer);
             
-            /* print out the process name */
-            printf("[%5d] %s (struct addr:%"PRIx64")\n", pid, procname, current_process);
             
             char* code_buffer[end_code-start_code];
             char* data_buffer[end_data-start_data];
             char* brk_buffer[brk-start_brk];
             char* stack_buffer[stack_pointer-start_stack];
 
-            printf("\n{\"status_code\":%d,\"result\":{\"name\":\"%s\",\"pid\":%d,\"code\":",status_code,procname,pid);
+            printf("\n{\"status_code\":%d,\"result\":{\"name\":\"%s\",\"pid\":%d,\"code\":\"",status_code,procname,pid);
             print_hex_string(code_buffer,vmi_read_va(vmi, start_code, pid, code_buffer, end_code - start_code));
-            printf(",\"data\":\"");
+            printf("\",\"data\":\"");
             print_hex_string(data_buffer,vmi_read_va(vmi, start_data, pid, data_buffer, end_data - start_data));
             printf("\",\"heap\":\"");
             print_hex_string(brk_buffer,vmi_read_va(vmi, start_brk, pid, brk_buffer, brk - start_brk));
@@ -193,9 +190,10 @@ int main (int argc, char **argv)
         }
     } while(next_list_entry != list_head);
 
-
-
 error_exit:
+    if(status_code != 200){
+        printf("{\"status_code\":%d, \"result\":\"%s\"}\n", status_code, err_result);
+    }
     /* resume the vm */
     vmi_resume_vm(vmi);
 
