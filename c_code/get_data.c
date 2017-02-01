@@ -170,7 +170,7 @@ int main (int argc, char **argv)
             char* brk_buffer[brk-start_brk];
             char* stack_buffer[stack_pointer-start_stack];
 
-            printf("\n{\"status_code\":%d,\"result\":{\"name\":\"%s\",\"pid\":%d,\"code\":\"",status_code,procname,pid);
+            printf("{\"status_code\":%d,\"result\":{\"name\":\"%s\",\"pid\":%d,\"code\":\"",status_code,procname,pid);
             print_hex_string(code_buffer,vmi_read_va(vmi, start_code, pid, code_buffer, end_code - start_code));
             printf("\",\"data\":\"");
             print_hex_string(data_buffer,vmi_read_va(vmi, start_data, pid, data_buffer, end_data - start_data));
@@ -178,7 +178,7 @@ int main (int argc, char **argv)
             print_hex_string(brk_buffer,vmi_read_va(vmi, start_brk, pid, brk_buffer, brk - start_brk));
             printf("\",\"stack\":\"");
             print_hex_string(stack_buffer,vmi_read_va(vmi, start_stack, pid, stack_buffer, stack_pointer - start_stack));
-            printf("\"}\n");
+            printf("\"}\0");
         }
 
         /* follow the next pointer */
