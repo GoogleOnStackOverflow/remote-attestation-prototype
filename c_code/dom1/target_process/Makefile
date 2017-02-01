@@ -1,4 +1,4 @@
-all: trivial.c trivial_1 trivial_2 trivial_3 trivial_4 trivial_5
+all: trivial.c trivial_1 trivial_2 trivial_3 trivial_4 trivial_5 tcp
 	chmod a+x ./exec.sh
 	chmod a+x ./stop.sh
 	gcc trivial.c -o ./bin/trivial
@@ -14,3 +14,5 @@ trivial_4: trivial_4.c
 	gcc trivial_4.c -o ./bin/trivial_4
 trivial_5: trivial_5.c
 	gcc trivial_5.c -o ./bin/trivial_5
+tcp: tcp_server.c
+	gcc tcp_server.c -o ./bin/tcp

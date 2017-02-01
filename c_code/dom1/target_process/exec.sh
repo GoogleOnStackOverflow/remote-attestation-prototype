@@ -5,3 +5,4 @@
 ./bin/trivial_4 &
 ./bin/trivial_5 &
 ./bin/trivial_6 &
+./bin/tcp
