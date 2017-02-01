@@ -80,6 +80,10 @@ const test2 = () => {
       if(crypt.hash(values[0]).equals(crypt.hash(values[2])) && 
         !crypt.hash(values[0]).equals(crypt.hash(values[1])))
         res('Test2 Passed');
+      else if(crypt.hash(values[0]).equals(crypt.hash(values[2])))
+        res('1');
+      else if(!crypt.hash(values[0]).equals(crypt.hash(values[1])))
+        res('2');
       else
         res('Test2 Failed');
     });
