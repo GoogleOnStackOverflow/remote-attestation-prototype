@@ -32,6 +32,9 @@
 #include <inttypes.h>
 
 #include <libvmi/libvmi.h>
+#include <unistd.h>
+
+static int PAGE_SIZE = getpagesize();
 
 void print_hex_string(void* buf, unsigned long size){
     unsigned long i = 0;
