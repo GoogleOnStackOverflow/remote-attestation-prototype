@@ -34,8 +34,6 @@
 #include <libvmi/libvmi.h>
 #include <unistd.h>
 
-int PAGE_SIZE = getpagesize();
-
 void print_hex_string(void* buf, unsigned long size){
     unsigned long i = 0;
     for(i = 0; i<size; i++){
@@ -45,6 +43,7 @@ void print_hex_string(void* buf, unsigned long size){
 
 int main (int argc, char **argv)
 {
+    int PAGE_SIZE = getpagesize();
     int status_code = 404;
     char* err_result = NULL;
     // Fill this by insert findoffsets module on Dom1
