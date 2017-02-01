@@ -34,7 +34,7 @@
 #include <libvmi/libvmi.h>
 #include <unistd.h>
 
-static int PAGE_SIZE = getpagesize();
+int PAGE_SIZE = getpagesize();
 
 void print_hex_string(void* buf, unsigned long size){
     unsigned long i = 0;
@@ -172,9 +172,9 @@ int main (int argc, char **argv)
             char* code_buffer[end_code-start_code];
             char* data_buffer[end_data-start_data];
             char* brk_buffer[brk-start_brk];
-            char* stack_buffer[stack_pointer*PAGESIZE];
+            char* stack_buffer[stack_pointer*PAGE_SIZE];
 
-            printf("{\"status_code\":%d,\"stack_address:\":\"%p~%p\",\"result\":{\"name\":\"%s\",\"pid\":%d",status_code,start_stack-(stack_pointer*PAGESIZE),start_stack,procname,pid);
+            printf("{\"status_code\":%d,\"stack_address:\":\"%p~%p\",\"result\":{\"name\":\"%s\",\"pid\":%d",status_code,start_stack-(stack_pointer*PAGE_SIZE),start_stack,procname,pid);
             printf(",\"data\":\"");
             if(0 == strcmp("code", target_data))
                 print_hex_string(code_buffer,vmi_read_va(vmi, start_code, pid, code_buffer, end_code - start_code));
@@ -183,7 +183,7 @@ int main (int argc, char **argv)
             else if(0 == strcmp("heap", target_data))
                 print_hex_string(brk_buffer,vmi_read_va(vmi, start_brk, pid, brk_buffer, brk - start_brk));
             else if(0 == strcmp("stack", target_data))
-                print_hex_string(stack_buffer,vmi_read_va(vmi, start_stack-(stack_pointer*PAGESIZE), pid, stack_buffer, stack_pointer*PAGESIZE));
+                print_hex_string(stack_buffer,vmi_read_va(vmi, start_stack-(stack_pointer*PAGE_SIZE), pid, stack_buffer, stack_pointer*PAGE_SIZE));
             printf("\"}}\n");
         }
 
