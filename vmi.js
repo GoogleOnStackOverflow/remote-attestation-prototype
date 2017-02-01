@@ -8,7 +8,8 @@ exports.get_state = function(proc_name){
 		return {"status_code":500,"result":err};
 	}
 
-	var result_obj = JSON.parse(result.stdout);
+	//console.log(result)
+	var result_obj = JSON.parse(result.stdout.toString());
 	console.log(result_obj["status_code"]);
 	console.log(result_obj["result"]);
 	return result_obj;
