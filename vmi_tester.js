@@ -66,7 +66,7 @@ const send_tcp_and_get_stack = (test_string) => {
 
     client.on('close', function() {
       console.log('Connection closed');
-      res(vmi.get_state('tcp','stack')['result']['data'].substring(8070,8070+2*test_string.length));
+      res(vmi.get_state('tcp','stack')['result']['data']);
     });
   });
 }
@@ -74,13 +74,14 @@ const send_tcp_and_get_stack = (test_string) => {
 const test2 = () => {
   return new Promise((res) => {
     send_tcp_and_get_stack(constants.DEVICE_INTERNAL_STATE).then(value1 => {
-      send_tcp_and_get_stack('ABCDEFG').then(value2 => {
-        send_tcp_and_get_stack('1234567123').then(value3 => {
-          console.log([value1,value2,value3]);
-          if(value1 === value2 && value1 !== value3)
-            res('Test2 Passed');
-          else
-            res('Test2 Failed');
+      send_tcp_and_get_stack(constants.DEVICE_INTERNAL_STATE).then(value2 => {
+        send_tcp_and_get_stack(crypt.hash(constants.DEVICE_INTERNAL_STATE)).then(value3 => {
+          console.log([
+            value1.indexOf(constants.DEVICE_INTERNAL_STATE.toString('hex')),
+            value2.indexOf(constants.DEVICE_INTERNAL_STATE.toString('hex')),
+            value3.indexOf(constants.DEVICE_INTERNAL_STATE.toString('hex'))
+          ]);
+          res('AAA');
         });
       });
     });
