@@ -71,9 +71,9 @@ const send_tcp_and_get_stack = (test_string) => {
 }
 
 const test2 = () => {
-  send_tcp_and_get_stack('ABCDEFG').then(value1 => {
-    send_tcp_and_get_stack('ABCDEFG').then(value2 => {
-      send_tcp_and_get_stack('1234567').then(value3 => {
+  send_tcp_and_get_stack('ABCDEFGGGGG').then(value1 => {
+    send_tcp_and_get_stack('abcdeeeeeee').then(value2 => {
+      send_tcp_and_get_stack('1234567123').then(value3 => {
         console.log([value1,value2,value3]);
       });
     });
