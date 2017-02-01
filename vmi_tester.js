@@ -50,26 +50,11 @@ const test1 = () => {
   console.log('Testing Passed.');
 }
 
-const test2 = () => {
+const test2 = (test_string) => {
   var client = new net.Socket();
   client.connect(1234, '10.0.2.16', function() {
     console.log('Connected');
-    client.write('ABCDEFGH');
-  });
-
-  client.on('data', function(data) {
-    console.log('Received: ' + data);
-    client.destroy(); // kill client after server's response
-  });
-
-  client.on('close', function() {
-    console.log('Connection closed');
-    console.log(vmi.get_state('tcp','stack')['result']['data']);
-  });
-
-  client.connect(1234, '10.0.2.16', function() {
-    console.log('Connected');
-    client.write('ABCDEFGHI');
+    client.write(test_string);
   });
 
   client.on('data', function(data) {
@@ -84,4 +69,5 @@ const test2 = () => {
 }
 
 //test1();
-test2();
+test2('ABCDEFG');
+test2('abcdefg');
