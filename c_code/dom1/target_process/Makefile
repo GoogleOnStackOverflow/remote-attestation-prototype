@@ -1,4 +1,6 @@
 all: trivial.c trivial_1 trivial_2 trivial_3 trivial_4 trivial_5
+	chmod a+x ./exec.sh
+	chmod a+x ./stop.sh
 	gcc trivial.c -o ./bin/trivial
 	gcc trivial.c -o ./bin/trivial_6
 

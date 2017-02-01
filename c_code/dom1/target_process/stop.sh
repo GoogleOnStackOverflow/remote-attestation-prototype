@@ -1,0 +1,1 @@
+pidof ./bin/* | xargs kill -9
