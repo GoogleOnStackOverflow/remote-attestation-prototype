@@ -77,9 +77,9 @@ const test2 = () => {
       send_tcp_and_get_stack(constants.DEVICE_INTERNAL_STATE).then(value2 => {
         send_tcp_and_get_stack(crypt.hash(constants.DEVICE_INTERNAL_STATE)).then(value3 => {
           console.log([
-            value1.indexOf(constants.DEVICE_INTERNAL_STATE.toString('hex')),
-            value2.indexOf(constants.DEVICE_INTERNAL_STATE.toString('hex')),
-            value3.indexOf(constants.DEVICE_INTERNAL_STATE.toString('hex'))
+            value1.indexOf('11DB7A0B547FE71FFE4B32A3B802A401'),
+            value2.indexOf('11DB7A0B547FE71FFE4B32A3B802A401'),
+            value3.indexOf('11DB7A0B547FE71FFE4B32A3B802A401')
           ]);
           res('AAA');
         });
