@@ -48,6 +48,7 @@ int main (int argc, char *argv[]) {
       if (read < 0) on_error("Client read failed\n");
 
       err = send(client_fd, buf, read, 0);
+      printf("%p\n", &buf);
       if (err < 0) on_error("Client write failed\n");
     }
   }
