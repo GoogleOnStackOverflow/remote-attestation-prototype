@@ -66,15 +66,16 @@ int main (int argc, char **argv)
     status_t status;
 
     /* this is the VM or file that we are looking at */
-    if (argc != 3) {
+    if (argc != 4) {
         status_code = 403;
-        err_result = "Wrong arguments. Usage: get_data <vmname> <process name>";
+        err_result = "Wrong arguments. Usage: get_data <vmname> <process name> <request type>";
         printf("{\"status_code\":%d, \"result\":\"%s\"}\n", status_code, err_result);
         return 1;
     }
 
     char *name = argv[1];
     char *target_process = argv[2];
+    char *target_data = argv[3];
 
     /* initialize the libvmi library */
     if (vmi_init(&vmi, VMI_AUTO | VMI_INIT_COMPLETE, name) == VMI_FAILURE) {
@@ -170,15 +171,17 @@ int main (int argc, char **argv)
             char* brk_buffer[brk-start_brk];
             char* stack_buffer[stack_pointer-start_stack];
 
-            printf("{\"status_code\":%d,\"result\":\"{\"name\":\"%s\",\"pid\":%d,\"code\":\"",status_code,procname,pid);
-            print_hex_string(code_buffer,vmi_read_va(vmi, start_code, pid, code_buffer, end_code - start_code));
-            printf("\",\"data\":\"");
-            print_hex_string(data_buffer,vmi_read_va(vmi, start_data, pid, data_buffer, end_data - start_data));
-            printf("\",\"heap\":\"");
-            print_hex_string(brk_buffer,vmi_read_va(vmi, start_brk, pid, brk_buffer, brk - start_brk));
-            printf("\",\"stack\":\"");
-            print_hex_string(stack_buffer,vmi_read_va(vmi, start_stack, pid, stack_buffer, stack_pointer - start_stack));
-            printf("\"}\"}\n");
+            printf("{\"status_code\":%d,\"result\":{\"name\":\"%s\",\"pid\":%d",status_code,procname,pid);
+            printf(",\"data\":\"", );
+            if(0 == strcmp("code", target_data))
+                print_hex_string(code_buffer,vmi_read_va(vmi, start_code, pid, code_buffer, end_code - start_code));
+            else if(0 == strcmp("data", target_data))
+                print_hex_string(data_buffer,vmi_read_va(vmi, start_data, pid, data_buffer, end_data - start_data));
+            else if(0 == strcmp("heap", target_data))
+                print_hex_string(brk_buffer,vmi_read_va(vmi, start_brk, pid, brk_buffer, brk - start_brk));
+            else if(0 == strcmp("stack", target_data))
+                print_hex_string(stack_buffer,vmi_read_va(vmi, start_stack, pid, stack_buffer, stack_pointer - start_stack));
+            printf("\"}}\n");
         }
 
         /* follow the next pointer */
