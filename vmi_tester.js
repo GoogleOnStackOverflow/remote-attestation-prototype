@@ -77,9 +77,9 @@ const test2 = () => {
     send_tcp_and_get_stack("ABCDEFG")
   ]).then(values => {
     var hash_values = [];
-    values.forEach((value)=>{
-      hash_values.push(crypt.hash(value));
-    })
+    for(var i=0; i<values.length; i++){
+      hash_values.push(crypt.hash(values[i]));
+    }
     assert(hash_values[0].equals(hash_values[2]), 'Stack should be the same');
     assert(!hash_values[0].equals(hash_values[1]), 'Stack should be different');
     console.log('Test2 Passed');
