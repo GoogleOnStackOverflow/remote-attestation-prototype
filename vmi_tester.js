@@ -82,6 +82,8 @@ const test2 = () => {
         console.log(values[i].substring(8064,8064+14));
         hashed_values.push(crypt.hash(values[i].substring(8064,8064+14)));
       }
+      assert(results[1].equals(results[2]),'1');
+      assert(!results[0].equals(results[2]),'2');
       res(hashed_values);
     });
   });
@@ -90,6 +92,4 @@ const test2 = () => {
 //test1();
 test2().then(results =>{
   console.log(results);
-  assert(results[0].equals(results[2]),'1');
-  assert(!results[0].equals(results[1]),'2');
 });
