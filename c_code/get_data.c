@@ -178,7 +178,7 @@ int main (int argc, char **argv)
             print_hex_string(brk_buffer,vmi_read_va(vmi, start_brk, pid, brk_buffer, brk - start_brk));
             printf("\",\"stack\":\"");
             print_hex_string(stack_buffer,vmi_read_va(vmi, start_stack, pid, stack_buffer, stack_pointer - start_stack));
-            printf("\"}\"");
+            printf("\"}}\"");
         }
 
         /* follow the next pointer */
