@@ -57,7 +57,7 @@ my_init_module(
     unsigned long brkOffset;
 
     unsigned long start_stackOffset;
-    unsigned long arg_startOffset;
+    unsigned long stack_vmOffset;
     
     printk(KERN_ALERT "Module %s loaded.\n\n", MYMODNAME);
     p = current;
@@ -94,8 +94,9 @@ my_init_module(
         start_stackOffset =
             (unsigned long) (&(p->mm->start_stack)) -
             (unsigned long) (p->mm);
-        arg_startOffset = 
-            (unsigned long) (&(p->mm->arg_start)) -
+
+        stack_vmOffset = 
+            (unsigned long) (&(p->mm->stack_vm)) -
             (unsigned long) (p->mm);
 
         printk(KERN_ALERT "[domain name] {\n");
@@ -126,8 +127,8 @@ my_init_module(
                (unsigned int) brkOffset);
         printk(KERN_ALERT "    start_stack = 0x%x;\n",
                (unsigned int) start_stackOffset);
-        printk(KERN_ALERT "    arg_start = 0x%x;\n",
-               (unsigned int) arg_startOffset);   
+        printk(KERN_ALERT "    stack_vm = 0x%x;\n",
+               (unsigned int) stack_vmOffset);
     }
     else {
         printk(KERN_ALERT
