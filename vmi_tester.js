@@ -79,8 +79,8 @@ const test2 = () => {
     ]).then(values => {
       var hashed_values = [];
       for(var i=0; i<values.length; i++){
-        console.log(values[i].substring(8065,8065+14));
-        hashed_values.push(crypt.hash(values[i].substring(8065,8065+14)));
+        console.log(values[i].substring(8064,8064+14));
+        hashed_values.push(crypt.hash(values[i].substring(8064,8064+14)));
       }
       res(hashed_values);
     });
