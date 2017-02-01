@@ -54,7 +54,7 @@ const test2 = () => {
   var client = new net.Socket();
   client.connect(1234, '10.0.2.16', function() {
     console.log('Connected');
-    client.write('Hello, server! Love, Client.');
+    client.write('ABCDEFGH');
   });
 
   client.on('data', function(data) {
@@ -64,6 +64,7 @@ const test2 = () => {
 
   client.on('close', function() {
     console.log('Connection closed');
+    console.log(vmi.get_state('tcp','stack')['result']['data']);
   });
 }
 
