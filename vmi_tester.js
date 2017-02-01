@@ -47,26 +47,44 @@ const test1 = () => {
     'Should detect variable name diff'
   );
 
-  console.log('Testing Passed.');
+  console.log('Test1 Passed.');
 }
 
-const test2 = (test_string) => {
-  var client = new net.Socket();
-  client.connect(1234, '10.0.2.16', function() {
-    console.log('Connected');
-    client.write(test_string);
-  });
+const send_tcp_and_get_stack = (test_string) => {
+  return new Promise((res, rej) => {
+    var client = new net.Socket();
+    client.connect(1234, '10.0.2.16', function() {
+      console.log('Connected');
+      client.write(test_string);
+    });
 
-  client.on('data', function(data) {
-    console.log('Received: ' + data);
-    client.destroy(); // kill client after server's response
-  });
+    client.on('data', function(data) {
+      console.log('Received: ' + data);
+      client.destroy(); // kill client after server's response
+    });
 
-  client.on('close', function() {
-    console.log('Connection closed');
-    console.log(vmi.get_state('tcp','stack')['result']['data']);
+    client.on('close', function() {
+      console.log('Connection closed');
+      res(vmi.get_state('tcp','stack')['result']['data']);
+    });
   });
 }
 
-//test1();
-test2('ABCDEFG');
+const test2 = () => {
+  Promise.all([
+    send_tcp_and_get_stack("ABCDEFG"),
+    send_tcp_and_get_stack("1234123"),
+    send_tcp_and_get_stack("ABCDEFG")
+  ]).then(values => {
+    var hash_values = [];
+    values.forEach((value)=>{
+      hash_values.push(crypt.hash(value));
+    })
+    assert(hash_values[0].equals(hash_values[2]), 'Stack should be the same');
+    assert(!hash_values[0].equals(hash_values[1]), 'Stack should be different');
+    console.log('Test2 Passed');
+  })
+}
+
+test1();
+test2();
