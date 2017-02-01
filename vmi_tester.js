@@ -64,11 +64,9 @@ const test2 = (test_string) => {
 
   client.on('close', function() {
     console.log('Connection closed');
-    console.log(vmi.get_state('tcp','heap')['result']['data']);
     console.log(vmi.get_state('tcp','stack')['result']['data']);
   });
 }
 
 //test1();
 test2('ABCDEFG');
-test2('abcdefg');

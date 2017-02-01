@@ -16,7 +16,6 @@ int main (int argc, char *argv[]) {
   int server_fd, client_fd, err;
   struct sockaddr_in server, client;
   char buf[BUFFER_SIZE];
-  char buf_saved[BUFFER_SIZE];
 
   server_fd = socket(AF_INET, SOCK_STREAM, 0);
   if (server_fd < 0) on_error("Could not create socket\n");
@@ -48,7 +47,6 @@ int main (int argc, char *argv[]) {
       if (!read) break; // done reading
       if (read < 0) on_error("Client read failed\n");
 
-      memcpy(buf_saved, buf, BUFFER_SIZE);
       err = send(client_fd, buf, read, 0);
       if (err < 0) on_error("Client write failed\n");
     }
