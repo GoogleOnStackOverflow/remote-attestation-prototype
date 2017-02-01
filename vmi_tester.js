@@ -66,6 +66,21 @@ const test2 = () => {
     console.log('Connection closed');
     console.log(vmi.get_state('tcp','stack')['result']['data']);
   });
+
+  client.connect(1234, '10.0.2.16', function() {
+    console.log('Connected');
+    client.write('ABCDEFGHI');
+  });
+
+  client.on('data', function(data) {
+    console.log('Received: ' + data);
+    client.destroy(); // kill client after server's response
+  });
+
+  client.on('close', function() {
+    console.log('Connection closed');
+    console.log(vmi.get_state('tcp','stack')['result']['data']);
+  });
 }
 
 //test1();
