@@ -71,26 +71,24 @@ const send_tcp_and_get_stack = (test_string) => {
 }
 
 const test2 = () => {
-  return new Promise((res)=>{
+  return new Promise((res, rej)=>{
     Promise.all([
       send_tcp_and_get_stack("ABCDEFG"),
       send_tcp_and_get_stack("1234123"),
       send_tcp_and_get_stack("ABCDEFG")
     ]).then(values => {
-      if(crypt.hash(values[0]).equals(crypt.hash(values[2])) && 
-        !crypt.hash(values[0]).equals(crypt.hash(values[1])))
-        res('Test2 Passed');
-      else if(crypt.hash(values[0]).equals(crypt.hash(values[2])))
-        res('1');
-      else if(!crypt.hash(values[0]).equals(crypt.hash(values[1])))
-        res('2');
-      else
-        res('Test2 Failed');
+      var hashed_values = [];
+      values.forEach(value => {
+        hashed_values.push(crypt.hash(value));
+      });
+      res(hashed_values);
     });
   });
 }
 
 //test1();
-test2().then(result =>{
-  console.log(result);
+test2().then(results =>{
+  console.log(results);
+  assert(results[0].equals(results[2]),'1');
+  assert(!results[0].equals(results[1]),'2');
 });
