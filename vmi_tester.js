@@ -71,20 +71,22 @@ const send_tcp_and_get_stack = (test_string) => {
 }
 
 const test2 = () => {
-  Promise.all([
-    send_tcp_and_get_stack("ABCDEFG"),
-    send_tcp_and_get_stack("1234123"),
-    send_tcp_and_get_stack("ABCDEFG")
-  ]).then(values => {
-    var hash_values = [];
-    for(var i=0; i<values.length; i++){
-      hash_values.push(crypt.hash(values[i]));
-    }
-    assert(hash_values[0].equals(hash_values[2]), 'Stack should be the same');
-    assert(!hash_values[0].equals(hash_values[1]), 'Stack should be different');
-    console.log('Test2 Passed');
-  })
+  return new Promise((res)=>{
+    Promise.all([
+      send_tcp_and_get_stack("ABCDEFG"),
+      send_tcp_and_get_stack("1234123"),
+      send_tcp_and_get_stack("ABCDEFG")
+    ]).then(values => {
+      if(crypt.hash(values[0]).equals(crypt.hash(values[2])) && 
+        !crypt.hash(values[0]).equals(crypt.hash(values[1])))
+        res('Test2 Passed');
+      else
+        res('Test2 Failed');
+    });
+  });
 }
 
-test1();
-test2();
+//test1();
+test2().then(result =>{
+  console.log(result);
+});
