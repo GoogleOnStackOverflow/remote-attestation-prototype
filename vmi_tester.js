@@ -71,16 +71,16 @@ const send_tcp_and_get_stack = (test_string) => {
 }
 
 const test2 = () => {
-  return new Promise((res, rej)=>{
+  return new Promise((res)=>{
     Promise.all([
       send_tcp_and_get_stack("ABCDEFG"),
       send_tcp_and_get_stack("1234123"),
       send_tcp_and_get_stack("ABCDEFG")
     ]).then(values => {
       var hashed_values = [];
-      values.forEach(value => {
-        hashed_values.push(crypt.hash(value));
-      });
+      for(var i=0; i<values.length; i++){
+        hashed_values.push(crypt.hash(values[i].substring(8065,8065+14)));
+      }
       res(hashed_values);
     });
   });
