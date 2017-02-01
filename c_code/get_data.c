@@ -167,13 +167,12 @@ int main (int argc, char **argv)
             vmi_read_addr_va(vmi, mm_addr + start_stack_offset, 0, &start_stack);
             vmi_read_addr_va(vmi, mm_addr + stack_vm_offset, 0, &stack_pointer);
             
-            unsigned long stack_size = stack_pointer*PAGE_SIZE;
             char* code_buffer[end_code-start_code];
             char* data_buffer[end_data-start_data];
             char* brk_buffer[brk-start_brk];
-            char* stack_buffer[stack_size];
+            char* stack_buffer[PAGE_SIZE];
 
-            printf("{\"status_code\":%d,\"stack_address:\":\"%p~%p\",\"result\":{\"name\":\"%s\",\"pid\":%d",status_code,start_stack-(stack_pointer*PAGE_SIZE),start_stack,procname,pid);
+            printf("{\"status_code\":%d,\"start_stack\":\"%p\",\"result\":{\"name\":\"%s\",\"pid\":%d",status_code,start_stack,procname,pid);
             printf(",\"data\":\"");
             if(0 == strcmp("code", target_data))
                 print_hex_string(code_buffer,vmi_read_va(vmi, start_code, pid, code_buffer, end_code - start_code));
@@ -182,7 +181,7 @@ int main (int argc, char **argv)
             else if(0 == strcmp("heap", target_data))
                 print_hex_string(brk_buffer,vmi_read_va(vmi, start_brk, pid, brk_buffer, brk - start_brk));
             else if(0 == strcmp("stack", target_data))
-                print_hex_string(stack_buffer,vmi_read_va(vmi, start_stack-stack_size, pid, stack_buffer, stack_size));
+                print_hex_string(stack_buffer,vmi_read_va(vmi, start_stack-PAGE_SIZE, pid, stack_buffer, PAGE_SIZE));
             printf("\"}}\n");
         }
 
