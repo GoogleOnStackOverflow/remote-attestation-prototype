@@ -1,6 +1,7 @@
 const vmi = require('./vmi');
 const crypt = require('./crypto');
 const assert = require('assert');
+const net = require('net');
 
 const test1 = () => {
   var codes_result = [];
@@ -45,6 +46,26 @@ const test1 = () => {
     codes_result_hash[5]),
     'Should detect variable name diff'
   );
+
+  console.log('Testing Passed.');
 }
 
-test1();
+const test2 = () => {
+  var client = new net.Socket();
+  client.connect(1234, '10.0.2.16', function() {
+    console.log('Connected');
+    client.write('Hello, server! Love, Client.');
+  });
+
+  client.on('data', function(data) {
+    console.log('Received: ' + data);
+    client.destroy(); // kill client after server's response
+  });
+
+  client.on('close', function() {
+    console.log('Connection closed');
+  });
+}
+
+//test1();
+test2();
