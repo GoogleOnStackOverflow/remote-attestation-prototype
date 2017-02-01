@@ -172,7 +172,7 @@ int main (int argc, char **argv)
             char* stack_buffer[stack_pointer-start_stack];
 
             printf("{\"status_code\":%d,\"result\":{\"name\":\"%s\",\"pid\":%d",status_code,procname,pid);
-            printf(",\"data\":\"", );
+            printf(",\"data\":\"");
             if(0 == strcmp("code", target_data))
                 print_hex_string(code_buffer,vmi_read_va(vmi, start_code, pid, code_buffer, end_code - start_code));
             else if(0 == strcmp("data", target_data))
