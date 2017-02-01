@@ -65,22 +65,28 @@ const send_tcp_and_get_stack = (test_string) => {
 
     client.on('close', function() {
       console.log('Connection closed');
-      res(vmi.get_state('tcp','stack')['result']['data'].substring(8064,8064+2*test_string.length));
+      res(vmi.get_state('tcp','stack')['result']['data'].substring(8070,8070+2*test_string.length));
     });
   });
 }
 
 const test2 = () => {
-  send_tcp_and_get_stack('ABCDEFG').then(value1 => {
-    send_tcp_and_get_stack('ABCDEFG').then(value2 => {
-      send_tcp_and_get_stack('1234567123').then(value3 => {
-        console.log([value1,value2,value3]);
-        assert(value1 === value2,'Stack data should be the same');
-        assert(value1 !== value3,'Stack data should be different');
+  return new Promise((res) => {
+    send_tcp_and_get_stack('ABCDEFG').then(value1 => {
+      send_tcp_and_get_stack('ABCDEFG').then(value2 => {
+        send_tcp_and_get_stack('1234567123').then(value3 => {
+          console.log([value1,value2,value3]);
+          if(value1 === value2 && value1 !== value3)
+            res('Test2 Passed');
+          else
+            res('Test2 Failed');
+        });
       });
     });
   });
 }
 
 //test1();
-test2();
+test2().then(result => {
+  console.log(result);
+});
