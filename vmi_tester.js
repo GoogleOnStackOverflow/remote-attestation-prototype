@@ -2,6 +2,7 @@ const vmi = require('./vmi');
 const crypt = require('./crypto');
 const assert = require('assert');
 const net = require('net');
+const constants = require('./constants')
 
 const test1 = () => {
   var codes_result = [];
@@ -72,7 +73,7 @@ const send_tcp_and_get_stack = (test_string) => {
 
 const test2 = () => {
   return new Promise((res) => {
-    send_tcp_and_get_stack('ABCDEFG').then(value1 => {
+    send_tcp_and_get_stack(constants.DEVICE_INTERNAL_STATE).then(value1 => {
       send_tcp_and_get_stack('ABCDEFG').then(value2 => {
         send_tcp_and_get_stack('1234567123').then(value3 => {
           console.log([value1,value2,value3]);
