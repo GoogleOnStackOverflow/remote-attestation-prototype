@@ -1,3 +1,4 @@
 /.sstore/
 /node_modules/
 /pubkey
+/bin/
