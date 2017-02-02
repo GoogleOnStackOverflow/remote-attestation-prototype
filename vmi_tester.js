@@ -80,12 +80,11 @@ const test2 = () => {
     send_tcp_and_get_stack(rand_bytes_1).then(value1 => {
       send_tcp_and_get_stack(rand_bytes_2).then(value2 => {
         send_tcp_and_get_stack(rand_bytes_1).then(value3 => {
-          console.log([
+          res([
             value1.indexOf(Buffer(rand_bytes_1).toString('hex')),
             value2.indexOf(Buffer(rand_bytes_2).toString('hex')),
             value3.indexOf(Buffer(rand_bytes_2).toString('hex'))
           ]);
-          res('AAA');
         });
       });
     });
@@ -94,5 +93,7 @@ const test2 = () => {
 
 //test1();
 test2().then(result => {
-  console.log(result);
+  assert(result[0] === result[1],'The offset should be the same');
+  assert(result[2] === -1 && result[0] !== result[2], 'Should not find the pattern');
+  console.log('Test2 Passed.');
 });
