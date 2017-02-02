@@ -47,6 +47,7 @@ int main (int argc, char **argv)
     int status_code = 404;
     char* err_result = NULL;
     // Fill this by insert findoffsets module on Dom1
+    /*
     unsigned long start_code_offset = 0xe8;
     unsigned long end_code_offset = 0xf0;
     unsigned long start_data_offset = 0xf8;
@@ -55,7 +56,12 @@ int main (int argc, char **argv)
     unsigned long brk_offset = 0x110;
     unsigned long start_stack_offset = 0x118;
     unsigned long stack_vm_offset = 0xd8;
-    
+    */
+    unsigned long start_code_offset = 0, end_code_offset = 0;
+    unsigned long start_data_offset = 0, end_data_offset = 0;
+    unsigned long start_brk_offset = 0, brk_offset = 0;
+    unsigned long start_stack_offset = 0, stack_vm_offset = 0;
+
     vmi_instance_t vmi;
     addr_t list_head = 0, next_list_entry = 0;
     addr_t current_process = 0;
@@ -96,7 +102,16 @@ int main (int argc, char **argv)
         name_offset = vmi_get_offset(vmi, "linux_name");
         pid_offset = vmi_get_offset(vmi, "linux_pid");
         mm_offset = vmi_get_offset(vmi, "linux_mm");
+        start_code_offset = vmi_get_offset(vmi, "start_code");
+        end_code_offset = vmi_get_offset(vmi, "end_code");
+        start_data_offset = vmi_get_offset(vmi, "start_data");
+        end_data_offset = vmi_get_offset(vmi, "end_data");
+        start_brk_offset = vmi_get_offset(vmi, "start_brk");
+        brk_offset = vmi_get_offset(vmi, "brk");
+        start_stack_offset = vmi_get_offset(vmi, "start_stack");
+        stack_vm_offset = vmi_get_offset(vmi, "stack_vm");
     }
+
     else if (VMI_OS_WINDOWS == vmi_get_ostype(vmi)) {
         status_code = 403;
         err_result = "Not supporting Windows";
