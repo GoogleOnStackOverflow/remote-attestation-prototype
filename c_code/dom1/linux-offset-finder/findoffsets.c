@@ -112,6 +112,7 @@ my_init_module(
                (unsigned int) pidOffset);
         printk(KERN_ALERT "    linux_pgd = 0x%x;\n",
                (unsigned int) pgdOffset);
+        printk(KERN_ALERT "}\n\nother useful offsets:\n");
         printk(KERN_ALERT "    start_code = 0x%x;\n",
                (unsigned int) start_codeOffset);
         printk(KERN_ALERT "    end_code = 0x%x;\n",
@@ -128,7 +129,7 @@ my_init_module(
                (unsigned int) start_stackOffset);
         printk(KERN_ALERT "    stack_vm = 0x%x;\n",
                (unsigned int) stack_vmOffset);
-        printk(KERN_ALERT "}\n");
+
     }
     else {
         printk(KERN_ALERT
