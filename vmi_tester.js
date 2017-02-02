@@ -93,7 +93,17 @@ const test2 = () => {
 
 //test1();
 test2().then(result => {
-  assert(result[0] === result[1],'The offset should be the same');
-  assert(result[2] === -1 && result[0] !== result[2], 'Should not find the pattern');
+  if(result[0] !== result[1]){
+    console.log('Error: The offset should be the same');
+    exit(1);
+  }
+  if(result[2] !== -1){
+    console.log('Error: Should not find the pattern');
+    exit(1);
+  }
+  if(result[0] === -1 || result[1] === -1){
+    console.log('Error: Should find pattern after first recieved')
+    exit(1);
+  }
   console.log('Test2 Passed.');
 });
