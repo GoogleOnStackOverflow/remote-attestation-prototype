@@ -72,7 +72,7 @@ const send_tcp_and_get_stack = (test_string) => {
 }
 
 const test2 = () => {
-  return new Promise((res) => {
+  return new Promise((res, rej) => {
     send_tcp_and_get_stack('11DB7A0B547FE71FFE4B32A3B802A401').then(value1 => {
       send_tcp_and_get_stack('11DB7A0B547FE71FFE4B32A3B802A401').then(value2 => {
         send_tcp_and_get_stack(crypt.hash('11DB7A0B547FE71FFE4B32A3B802A401')).then(value3 => {
