@@ -1,5 +1,6 @@
 const vmi = require('./vmi');
 const crypt = require('./crypto');
+const util = require('./util');
 const assert = require('assert');
 const net = require('net');
 const constants = require('./constants')
@@ -73,13 +74,16 @@ const send_tcp_and_get_stack = (test_string) => {
 
 const test2 = () => {
   return new Promise((res, rej) => {
-    send_tcp_and_get_stack('11DB7A0B547FE71FFE4B32A3B802A401').then(value1 => {
-      send_tcp_and_get_stack('11DB7A0B547FE71FFE4B32A3B802A401').then(value2 => {
-        send_tcp_and_get_stack(crypt.hash('11DB7A0B547FE71FFE4B32A3B802A401')).then(value3 => {
+    var rand_bytes_1 = util.hexadecimal_encode(util.get_random(32));
+    var rand_bytes_2 = util.hexadecimal_encode(util.get_random(32));
+
+    send_tcp_and_get_stack(rand_bytes_1).then(value1 => {
+      send_tcp_and_get_stack(rand_bytes_2).then(value2 => {
+        send_tcp_and_get_stack(rand_bytes_1).then(value3 => {
           console.log([
-            value1.indexOf(Buffer.from('11DB7A0B547FE71FFE4B32A3B802A401').toString('hex')),
-            value2.indexOf(Buffer.from('11DB7A0B547FE71FFE4B32A3B802A401').toString('hex')),
-            value3.indexOf(Buffer.from('11DB7A0B547FE71FFE4B32A3B802A401').toString('hex'))
+            value1.indexOf(Buffer(rand_bytes_1).toString('hex')),
+            value2.indexOf(Buffer(rand_bytes_2).toString('hex')),
+            value3.indexOf(Buffer(rand_bytes_2).toString('hex'))
           ]);
           res('AAA');
         });
