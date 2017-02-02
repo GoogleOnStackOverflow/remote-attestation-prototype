@@ -8,6 +8,7 @@ const constants = require('./constants')
 const test1 = () => {
   var codes_result = [];
   var codes_result_hash = [];
+  var pass = true;
   codes_result.push(vmi.get_state('trivial','code'))
   console.log("Retrieving Data from Dom-1");
   for(var i=1; i<7; i++)
@@ -19,37 +20,39 @@ const test1 = () => {
     console.log('\t' + codes_result_hash[i].toString('hex'));
   }
 
-  assert(codes_result_hash[0].equals(
-    codes_result_hash[6]),
-    'Should recognize legal process'
-  );
+  if(!codes_result_hash[0].equals(codes_result_hash[6])){
+    console.log('Error: Should recognize legal process');
+    pass = false;
+  }
+  if(codes_result_hash[0].equals(codes_result_hash[1])){
+    console.log('Error: Should detect static variable init diff');
+    pass = false;
+  }
 
-  assert(!codes_result_hash[0].equals(
-    codes_result_hash[1]),
-    'Should detect static variable init diff'
-  );
+  if(codes_result_hash[0].equals(codes_result_hash[2])){
+    console.log('Error: Should detect global function return value diff');
+    pass = false;
+  }
 
-  assert(!codes_result_hash[0].equals(
-    codes_result_hash[2]),
-    'Should detect global function return value diff'
-  );
+  if(codes_result_hash[0].equals(codes_result_hash[3])){
+    console.log('Error: Should detect local variable init value diff');
+    pass = false;
+  }
 
-  assert(!codes_result_hash[0].equals(
-    codes_result_hash[3]),
-    'Should detect local variable init value diff'
-  );
+  if(codes_result_hash[0].equals(codes_result_hash[4])){
+    console.log('Error: Should detect function call diff');
+    pass = false;
+  }
 
-  assert(!codes_result_hash[0].equals(
-    codes_result_hash[4]),
-    'Should detect function call diff'
-  );
+  if(codes_result_hash[0].equals(codes_result_hash[5])){
+    console.log('Error: Should detect variable name diff');
+    pass = false;
+  }
 
-  assert(!codes_result_hash[0].equals(
-    codes_result_hash[5]),
-    'Should detect variable name diff'
-  );
-
-  console.log('Test1 Passed.');
+  if(pass)
+    console.log('Test1 Passed.');
+  else
+    console.log('Test1 Failed.');
 }
 
 const send_tcp_and_get_stack = (test_string) => {
@@ -67,6 +70,7 @@ const send_tcp_and_get_stack = (test_string) => {
 
     client.on('close', function() {
       console.log('Connection closed');
+      console.log("Retrieving Data from Dom-1");
       res(vmi.get_state('tcp','stack')['result']['data']);
     });
   });
@@ -78,8 +82,11 @@ const test2 = () => {
     var rand_bytes_2 = util.hexadecimal_encode(util.get_random(32));
 
     send_tcp_and_get_stack(rand_bytes_1).then(value1 => {
+      console.log("Retrieving Data Done");
       send_tcp_and_get_stack(rand_bytes_2).then(value2 => {
+        console.log("Retrieving Data Done");
         send_tcp_and_get_stack(rand_bytes_1).then(value3 => {
+          console.log("Retrieving Data Done");
           res([
             value1.indexOf(Buffer(rand_bytes_1).toString('hex')),
             value2.indexOf(Buffer(rand_bytes_2).toString('hex')),
@@ -91,19 +98,24 @@ const test2 = () => {
   });
 }
 
-//test1();
+test1();
+
 test2().then(result => {
+  var pass = true
   if(result[0] !== result[1]){
     console.log('Error: The offset should be the same');
-    exit(1);
+    pass = false;
   }
   if(result[2] !== -1){
     console.log('Error: Should not find the pattern');
-    exit(1);
+    pass = false;
   }
   if(result[0] === -1 || result[1] === -1){
     console.log('Error: Should find pattern after first recieved')
-    exit(1);
+    pass = false;
   }
-  console.log('Test2 Passed.');
+  if(pass)
+    console.log('Test2 Passed.');
+  else
+    console.log('Test2 Failed.');
 });
