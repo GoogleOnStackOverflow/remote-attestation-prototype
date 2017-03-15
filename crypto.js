@@ -1,50 +1,40 @@
 module.exports = (function(){
 
   const assert = require('assert');
-  const child_process = require('child_process');
   const crypto = require('crypto');
-  const fs = require('fs');
-  const os = require('os');
-  const path = require('path');
 
   const hash = function (message_buf) {
     return crypto.createHash('sha256').update(message_buf).digest();
   };
 
+  const armor = function (heading_str, body_raw_data) {
+    return Buffer.from(
+      [].concat(
+        ['-----BEGIN ' + heading_str + '-----'],
+        body_raw_data.toString('base64').match(/.{1,64}/g),
+        ['-----END ' + heading_str + '-----', '']
+      ).join('\n'), 'utf8'
+    );
+  };
+
   const keygen = function () {
-    const TMPDIR = os.tmpdir();
+    const ecdh = require('crypto').createECDH('secp256k1');
+    const pk = ecdh.generateKeys();
+    const sk = ecdh.getPrivateKey();
 
-    child_process.spawnSync('openssl', [
-      'ecparam',
-      '-genkey',
-      '-name', 'secp256k1',
-      '-outform', 'PEM',
-      '-out', path.join(TMPDIR, 'sk.orig'),
+    const sk_ = Buffer.concat([
+      Buffer.from('30740201010420', 'hex'),
+      sk,
+      Buffer.from('a00706052b8104000aa144034200', 'hex'),
+      pk
+    ]);
+    const pk_ = Buffer.concat([
+      Buffer.from('3056301006072a8648ce3d020106052b8104000a034200', 'hex'),
+      pk
     ]);
 
-    child_process.spawnSync('dd', [
-      'skip=71',
-      'bs=1',
-      'if=' + path.join(TMPDIR, 'sk.orig'),
-      'of=' + path.join(TMPDIR, 'sk'),
-    ]);
-
-    child_process.spawnSync('openssl', [
-      'ec',
-      '-pubout',
-      '-inform', 'PEM',
-      '-outform', 'PEM',
-      '-in', path.join(TMPDIR, 'sk'),
-      '-out', path.join(TMPDIR, 'pk'),
-    ]);
-
-    const private_key_buf = fs.readFileSync(path.join(TMPDIR, 'sk'));
-    const public_key_buf = fs.readFileSync(path.join(TMPDIR, 'pk'));
-
-    fs.unlinkSync(path.join(TMPDIR, 'sk.orig'));
-    fs.unlinkSync(path.join(TMPDIR, 'sk'));
-    fs.unlinkSync(path.join(TMPDIR, 'pk'));
-
+    const private_key_buf = armor('EC PRIVATE KEY', sk_);
+    const public_key_buf = armor('PUBLIC KEY', pk_);
     return [private_key_buf, public_key_buf];
   };
 
