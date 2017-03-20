@@ -1,0 +1,21 @@
+New API design
+
+POST/list-vms
+() -> Array of String (VM names)
+
+POST/list-proc
+String (VM name) -> {"error":"VM_NOT_FOUND" | null, "procs":[String (proc names)]}
+
+POST/measure
+{
+	"vm":		String (VM name),
+	"proc":		String (proc name),
+	"measure":	String ("code" | "data" | "heap" | "stack"),
+	"nonce":	String (/[0-9 a-f]{32}$/)
+}
+->
+{
+	"error":"VM_NOT_FOUND" | "PROC_NOT_FOUND" | null,
+	"result":[String (hashed hex string 64 characters)],
+	"sign":Sign of 32N bytes + nonce
+}

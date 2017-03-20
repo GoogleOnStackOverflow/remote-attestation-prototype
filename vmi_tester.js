@@ -99,7 +99,6 @@ const test2 = () => {
 }
 
 test1();
-
 test2().then(result => {
   var pass = true
   if(result[0] !== result[1]){
