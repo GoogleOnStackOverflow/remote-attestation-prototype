@@ -93,7 +93,6 @@ int main (int argc, char **argv)
     list_head = vmi_translate_ksym2v(vmi, "init_task") + tasks_offset;
     next_list_entry = list_head;
 
-    printf("[");
     /* walk the task list */
     do {
         current_process = next_list_entry - tasks_offset;
@@ -105,19 +104,17 @@ int main (int argc, char **argv)
             goto error_exit;
         }
 
-        printf("\"%s\",", procname);
+        printf("%s\n", procname);
         /* follow the next pointer */
         free(procname);
         procname = NULL;
 
         status = vmi_read_addr_va(vmi, next_list_entry, 0, &next_list_entry);
         if (status == VMI_FAILURE) {
-            printf("Failed to read next pointer in loop at %"PRIx64"\n", next_list_entry);
+            printf("VM_NOT_FOUND\n");
             goto error_exit;
         }
     } while(next_list_entry != list_head);
-
-    printf("]\n");
 
 error_exit:
     /* resume the vm */

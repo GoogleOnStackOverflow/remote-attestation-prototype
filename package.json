@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/GoogleOnStackOverflow/remote-attestation-prototype#readme",
   "dependencies": {
+    "body-parser": "^1.17.1",
     "express": "^4.14.0",
-    "http": "0.0.0"
+    "http": "0.0.0",
+    "request": "^2.81.0"
   }
 }

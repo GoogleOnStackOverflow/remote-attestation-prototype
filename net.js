@@ -1,5 +1,7 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const app = express();
+app.use(bodyParser.json());
 
 const scm = require('./scm');
 const util = require('./util');
@@ -11,8 +13,9 @@ var isHex = (h) => {
 	
 	var re = /[0-9A-Fa-f]{32}/g;
 	return (re.test(h));
-}
+};
 
+// Legacy API
 app.get('/attest/*', (req, res) => {
 	console.log('Get Request');
 	var S_chal = req.params['0'];
@@ -29,7 +32,35 @@ app.get('/attest/*', (req, res) => {
 
 app.get('*', (req, res) => {
 	res.send(400);
-})
+});
+// Legacy API end
+
+app.post('/list-vms', (req, res) => {
+	var vm_list = scm.list_vm();
+	res.send(vm_list);
+});
+
+app.post('/list-proc', (req, res) => {
+	console.log(req.body.vm);
+	var proc_list = scm.list_proc(req.body.vm);
+	res.send(proc_list);
+});
+
+app.post('/measure', (req, res) => {
+	console.log(req.body);
+
+	if (!isHex(req.body.nonce)){
+		console.log('400 Bad Request Sent');
+		res.send(400);
+	}else{
+		var result = scm.process_att_challenge(req.body);
+		res.send(result);
+	}
+});
+
+app.post('*', (req, res) => {
+	res.send(400);
+});
 
 exports.start_http_server = () => {
 	var expressPort = (process.env.PORT || 3000);

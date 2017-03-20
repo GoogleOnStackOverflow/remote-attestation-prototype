@@ -4,7 +4,7 @@ const crypt = require('./crypto');
 const util = require('./util');
 const constants = require('./constants')
 
-const host_ip = '127.0.0.1';
+const host_ip = '192.168.56.2';
 const host_port = 3000;
 
 // TODO: We should modify this to generate the expected S_prov
