@@ -1,0 +1,3 @@
+all: my_libvmi_list_proc.c my_libvmi_measure.c
+	gcc -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -Wall -Wextra -g -O2 -o my-libvmi-list-proc my_libvmi_list_proc.c -lvmi -lglib-2.0 -lm -lxenctrl -lxenstore -ldl -Wl,-rpath,/usr/local/lib/
+	gcc -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -Wall -Wextra -g -O2 -o my-libvmi-measure my_libvmi_measure.c -lvmi -lglib-2.0 -lm -lxenctrl -lxenstore -ldl -Wl,-rpath,/usr/local/lib/

@@ -20,13 +20,12 @@ exports.process_att_challenge = (req) => {
 	})
 
 	var req_nonce = util.hexadecimal_decode(req.nonce);
-	var pre_s = req_nonce;
+	var pre_s = Buffer.from(req_nonce);
 	for(var i=0; i<S_prov_h.length; i++){
-		pre_s = Buffer.concat([pre_s, S_prov_h[i]], req_nonce.length + (i+1)*S_prov.length);
+		pre_s = Buffer.concat([pre_s, S_prov_h[i]], pre_s.length + S_prov_h[i].length);
 	}
 	
 	var pri = sstore.read('_attestation_private_key_');
-
 	var alpha = crypt.sign(pri, pre_s);
 
 	var S_prov_h_string = [];

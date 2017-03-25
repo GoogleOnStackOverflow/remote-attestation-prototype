@@ -8,9 +8,15 @@ exports.get_state = (vm_name,proc_name,data) => {
       [vm_name,proc_name,data]
     );
   }catch(err){
-    return {"error":"VM_NOT_FOUND","result":null};
+    return {"error":"VM_NOT_FOUND","result":[], "sign":null};
   }
+  
+  if(result.stdout.toString().indexOf('VM_NOT_FOUND\n') !== -1)
+    return {"error":'VM_NOT_FOUND',"result":[], "sign":null};
 
+  if(result.stdout.toString().indexOf('PROC_NOT_FOUND\n') !== -1)
+    return {"error":'PROC_NOT_FOUND',"result":[], "sign":null};
+  
   var result_arr = result.stdout.toString().split('\n');
   result_arr.pop();
   return {"error":null, "result":result_arr};
@@ -38,5 +44,12 @@ exports.get_proc_list = (vm_name) => {
   var result_arr = result.stdout.toString().split('\n');
   result_arr.pop();
 
-  return {"error":null ,"procs":result_arr};;
+  var result_arr_unq = [];
+  result_arr.forEach((e) => {
+    if(result_arr_unq.indexOf(e) == -1){
+      result_arr_unq.push(e);
+    }
+  })
+
+  return {"error":null ,"procs":result_arr_unq};;
 }

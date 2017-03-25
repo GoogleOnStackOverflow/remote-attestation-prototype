@@ -22,20 +22,19 @@ const measure_request = (vm_name, proc_name, measure, nonce) => {
 
 	request(options, function (error, response, body) {
   		if(!body.error){
-  			console.log(body);
-  			/*
   			var alpha = util.hexadecimal_decode(body.sign);
   			var key_public = fs.readFileSync(constants.PATH_TO_PUBLIC_KEY_FILE);
-  			var expected_alpha = nonce;
+  			var expected_alpha = Buffer.from(nonce);
   			for(var i=0; i<body.result.length; i++){
   				expected_alpha = Buffer.concat([expected_alpha,util.hexadecimal_decode(body.result[i])],expected_alpha.length + util.hexadecimal_decode(body.result[i]).length)
   			}
 
-  			if(crypt.verify(key_public, expected_alpha, alpha))
-  				console.log('Sign Verified');
-  			else
+  			if(crypt.verify(key_public, expected_alpha, alpha)){
+          console.log('Sign Verified');
+          console.log(body.result);
+        }else
   				console.log('Sign not legal');
-  			*/
+  			
   		}else{
   			console.log(body.error);
   		}

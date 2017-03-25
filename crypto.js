@@ -4,7 +4,7 @@ const armor = function (heading_str, raw_buf) {
   const heading = ['-----BEGIN ' + heading_str + '-----'];
   const footer = ['-----END ' + heading_str + '-----'];
   const body = raw_buf.toString('base64').match(/.{1,64}/g);
-  const all_lines = [].concat(heading, footer, body, ['']).join('\n');
+  const all_lines = [].concat(heading, body, footer, ['']).join('\n');
   return Buffer.from(all_lines, 'utf8');
 };
 
