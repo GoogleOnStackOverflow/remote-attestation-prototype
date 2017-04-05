@@ -26,7 +26,7 @@ exports.process_att_challenge = (req) => {
 	}
 	
 	var pri = sstore.read('_attestation_private_key_');
-	var alpha = crypt.sign(pri, pre_s);
+	var alpha = util.hexadecimal_decode(crypt.sign(pri, pre_s));
 
 	var S_prov_h_string = [];
 	S_prov_h.forEach((buf)=>{
